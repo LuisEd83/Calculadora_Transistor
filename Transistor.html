@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BJT - Emissor Comum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 480px;
+            background-color: #2d2d2d;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #4CAF50;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #4CAF50;
+            border-left: 3px solid #4CAF50;
+            padding-left: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group label {
+            width: 80px;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #3d3d3d;
+            color: white;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .main-inputs {
+            background-color: #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .datasheet-section {
+            background-color: #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .checkbox-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-executar {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-executar:hover {
+            background-color: #45a049;
+        }
+
+        .btn-limpar {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-limpar:hover {
+            background-color: #1976D2;
+        }
+
+        .btn-sair {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-sair:hover {
+            background-color: #da190b;
+        }
+
+        .feedback {
+            text-align: center;
+            margin: 10px 0;
+            min-height: 30px;
+            font-size: 16px;
+        }
+
+        .success {
+            color: #4CAF50;
+        }
+
+        .error {
+            color: #f44336;
+        }
+
+        /* Modal de resultados */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #2d2d2d;
+            padding: 25px;
+            border-radius: 15px;
+            width: 520px;
+            max-width: 90%;
+        }
+
+        .modal h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            border-left: 3px solid #4CAF50;
+            padding-left: 10px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .result-card {
+            background-color: #333;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .result-card h3 {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 5px 0;
+        }
+
+        .result-unit {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .alert {
+            background-color: #f44336;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .btn-fechar {
+            background-color: #555;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-fechar:hover {
+            background-color: #666;
+        }
+
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BJT – Emissor Comum</h1>
+        <p class="subtitle">Insira os valores corretamente.</p>
+
+        <div class="main-inputs">
+            <div class="section-title">Parâmetros Principais</div>
+            <div class="input-group">
+                <label>Vbb [V]:</label>
+                <input type="text" id="Vbb" placeholder="Ex: 5">
+            </div>
+            <div class="input-group">
+                <label>Vcc [V]:</label>
+                <input type="text" id="Vcc" placeholder="Ex: 12">
+            </div>
+            <div class="input-group">
+                <label>Rb [Ω]:</label>
+                <input type="text" id="Rb" placeholder="Ex: 1000">
+            </div>
+            <div class="input-group">
+                <label>Rc [Ω]:</label>
+                <input type="text" id="Rc" placeholder="Ex: 100">
+            </div>
+            <div class="input-group">
+                <label>β (hFE):</label>
+                <input type="text" id="beta" placeholder="Ex: 100">
+            </div>
+            <div class="input-group">
+                <label>Vbe [V]:</label>
+                <input type="text" id="Vbe" placeholder="Ex: 0.7">
+            </div>
+        </div>
+
+        <div class="datasheet-section">
+            <div class="section-title">— LIMITES DO DATASHEET</div>
+            <label class="checkbox-group">
+                <input type="checkbox" id="usarDatasheet">
+                Usar limites do datasheet
+            </label>
+
+            <div id="datasheetFields" style="opacity: 0.5; pointer-events: none;">
+                <div class="input-group">
+                    <label>Ic(max) [A]:</label>
+                    <input type="text" id="Icmax" placeholder="Ex: 0.1">
+                </div>
+                <div class="input-group">
+                    <label>Pt(max) [W]:</label>
+                    <input type="text" id="Ptmax" placeholder="Ex: 0.5">
+                </div>
+                <div class="input-group">
+                    <label>Vce(max) [V]:</label>
+                    <input type="text" id="Vcemax" placeholder="Ex: 30">
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-executar" onclick="executar()">Executar</button>
+            <button class="btn-limpar" onclick="limpar()">Limpar</button>
+            <button class="btn-sair" onclick="sair()">Sair</button>
+        </div>
+
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <!-- Modal de Resultados -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2>— RESULTADOS</h2>
+            
+            <div id="alertas" style="display: none;"></div>
+
+            <div class="results-grid">
+                <div class="result-card">
+                    <h3>CORRENTE DE BASE</h3>
+                    <div class="result-value" id="Ib">0,000</div>
+                    <div class="result-unit">mA</div>
+                </div>
+                <div class="result-card">
+                    <h3>CORRENTE DO COLETOR</h3>
+                    <div class="result-value" id="Ic">0,000</div>
+                    <div class="result-unit">mA</div>
+                </div>
+                <div class="result-card">
+                    <h3>TENSÃO VCE</h3>
+                    <div class="result-value" id="Vce">0,000</div>
+                    <div class="result-unit">mV</div>
+                </div>
+                <div class="result-card">
+                    <h3>POTÊNCIA TRANSISTOR</h3>
+                    <div class="result-value" id="Pt">0,000</div>
+                    <div class="result-unit">mW</div>
+                </div>
+            </div>
+
+            <div id="saturacao" style="text-align: center; margin: 10px 0; font-weight: bold;"></div>
+
+            <button class="btn-fechar" onclick="fecharModal()">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        // Função para avaliar expressões matemáticas
+        function avaliarExpressao(expr) {
+            if (!expr || expr.trim() === '') return null;
+            
+            expr = expr.replace(/,/g, '.');
+            
+            // Permitir apenas números, operadores básicos, e, pi, sqrt
+            if (!/^[0-9\s\+\-\*\/\(\)\.eEpi sqrt]+$/.test(expr)) {
+                return null;
+            }
+
+            try {
+                // Substituir constantes
+                expr = expr.replace(/pi/g, Math.PI.toString())
+                          .replace(/e/g, Math.E.toString())
+                          .replace(/sqrt/g, 'Math.sqrt');
+                
+                const resultado = eval(expr);
+                if (isFinite(resultado)) {
+                    return resultado;
+                }
+                return null;
+            } catch {
+                return null;
+            }
+        }
+
+        // Habilitar/desabilitar campos do datasheet
+        document.getElementById('usarDatasheet').addEventListener('change', function(e) {
+            const fields = document.getElementById('datasheetFields');
+            if (this.checked) {
+                fields.style.opacity = '1';
+                fields.style.pointerEvents = 'auto';
+            } else {
+                fields.style.opacity = '0.5';
+                fields.style.pointerEvents = 'none';
+            }
+        });
+
+        // Função para validar variáveis
+        function validarVariaveis() {
+            const campos = {
+                Vbb: document.getElementById('Vbb').value,
+                Vcc: document.getElementById('Vcc').value,
+                Rb: document.getElementById('Rb').value,
+                Rc: document.getElementById('Rc').value,
+                beta: document.getElementById('beta').value,
+                Vbe: document.getElementById('Vbe').value
+            };
+
+            const principais = {};
+            for (let [key, value] of Object.entries(campos)) {
+                const valor = avaliarExpressao(value);
+                if (valor === null) {
+                    mostrarFeedback('Valor inválido em ' + key + '!', 'error');
+                    return null;
+                }
+                principais[key] = valor;
+            }
+
+            // Datasheet (opcional)
+            const limites = { Icmax: null, Ptmax: null, Vcemax: null };
+            if (document.getElementById('usarDatasheet').checked) {
+                limites.Icmax = avaliarExpressao(document.getElementById('Icmax').value);
+                limites.Ptmax = avaliarExpressao(document.getElementById('Ptmax').value);
+                limites.Vcemax = avaliarExpressao(document.getElementById('Vcemax').value);
+
+                if (limites.Icmax === null || limites.Ptmax === null || limites.Vcemax === null) {
+                    mostrarFeedback('Erro nos limites do datasheet.', 'error');
+                    return null;
+                }
+            }
+
+            mostrarFeedback('Valores aceitos! Executando...', 'success');
+            
+            return {
+                principais: principais,
+                limites: limites
+            };
+        }
+
+        // Função para calcular o transistor
+        function calcularTransistor(Vbb, Vcc, Rb, Rc, beta, Vbe, Ic_max_ds, Pt_max_ds, Vce_max_ds) {
+            // Passo 1: Corrente de base
+            let Ib;
+            if (Vbb <= Vbe) {
+                Ib = 0;
+            } else {
+                Ib = (Vbb - Vbe) / Rb;
+            }
+
+            // Passo 2: Corrente de coletor ideal
+            const Ic_ideal = beta * Ib;
+
+            // Passo 3: Limite imposto pelo circuito (Vce_sat ≈ 0,2 V)
+            const Ic_max_circuito = (Vcc - 0.2) / Rc;
+
+            // Passo 4: Saturação
+            const saturado = Ic_ideal > Ic_max_circuito;
+            const Ic = saturado ? Ic_max_circuito : Ic_ideal;
+
+            // Passo 5: Tensão VCE
+            const Vce = Vcc - Rc * Ic;
+
+            // Passo 6: Potência total no transistor
+            const Pt = Vce * Ic + Vbe * Ib;
+
+            // Verificações de datasheet (opcional)
+            const alertas = {
+                Ic: Ic_max_ds !== null && Ic > Ic_max_ds,
+                Vce: Vce_max_ds !== null && Vce > Vce_max_ds,
+                Pt: Pt_max_ds !== null && Pt > Pt_max_ds
+            };
+
+            return {
+                Ib_mA: Ib * 1000,
+                Ic_mA: Ic * 1000,
+                Vce_mV: Vce * 1000,
+                Pt_mW: Pt * 1000,
+                saturado: saturado,
+                alertas: alertas
+            };
+        }
+
+        // Formatar número
+        function formatarNumero(valor) {
+            return valor.toFixed(3).replace('.', ',');
+        }
+
+        // Mostrar feedback
+        function mostrarFeedback(mensagem, tipo) {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = mensagem;
+            feedback.className = 'feedback ' + (tipo || '');
+        }
+
+        // Executar cálculo
+        function executar() {
+            const dados = validarVariaveis();
+            
+            if (!dados) return;
+
+            const res = calcularTransistor(
+                dados.principais.Vbb,
+                dados.principais.Vcc,
+                dados.principais.Rb,
+                dados.principais.Rc,
+                dados.principais.beta,
+                dados.principais.Vbe,
+                dados.limites.Icmax,
+                dados.limites.Ptmax,
+                dados.limites.Vcemax
+            );
+
+            mostrarResultados(res);
+        }
+
+        // Mostrar resultados no modal
+        function mostrarResultados(resultados) {
+            document.getElementById('Ib').textContent = formatarNumero(resultados.Ib_mA);
+            document.getElementById('Ic').textContent = formatarNumero(resultados.Ic_mA);
+            document.getElementById('Vce').textContent = formatarNumero(resultados.Vce_mV);
+            document.getElementById('Pt').textContent = formatarNumero(resultados.Pt_mW);
+
+            // Status de saturação
+            const saturacaoDiv = document.getElementById('saturacao');
+            saturacaoDiv.textContent = resultados.saturado ? '⚠️ TRANSISTOR SATURADO' : '✓ Região ativa';
+            saturacaoDiv.style.color = resultados.saturado ? '#f44336' : '#4CAF50';
+
+            // Alertas do datasheet
+            const alertasDiv = document.getElementById('alertas');
+            const alertas = [];
+            
+            if (resultados.alertas.Ic) alertas.push('⚠️ Corrente de coletor excede Ic(max)');
+            if (resultados.alertas.Vce) alertas.push('⚠️ Tensão VCE excede Vce(max)');
+            if (resultados.alertas.Pt) alertas.push('⚠️ Potência excede Pt(max)');
+            
+            if (alertas.length > 0) {
+                alertasDiv.style.display = 'block';
+                alertasDiv.innerHTML = alertas.map(a => `<div class="alert">${a}</div>`).join('');
+            } else {
+                alertasDiv.style.display = 'none';
+            }
+
+            // Mostrar modal
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // Fechar modal
+        function fecharModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Limpar campos
+        function limpar() {
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => input.value = '');
+            document.getElementById('usarDatasheet').checked = false;
+            document.getElementById('datasheetFields').style.opacity = '0.5';
+            document.getElementById('datasheetFields').style.pointerEvents = 'none';
+            mostrarFeedback('', '');
+        }
+
+        // Sair (fechar a página ou apenas limpar)
+        function sair() {
+            if (confirm('Deseja realmente sair?')) {
+                limpar();
+                mostrarFeedback('', '');
+            }
+        }
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Permitir apenas números e operadores nos inputs (opcional)
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('keydown', function(e) {
+                // Permitir backspace, delete, setas, etc.
+                if (e.key === 'Backspace' || e.key === 'Delete' || e.key === 'ArrowLeft' || 
+                    e.key === 'ArrowRight' || e.key === 'Tab') {
+                    return;
+                }
+                
+                // Permitir números, operadores e ponto
+                if (!/^[\d\s\+\-\*\/\(\)\.eE]$/.test(e.key) && e.key !== ' ') {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
